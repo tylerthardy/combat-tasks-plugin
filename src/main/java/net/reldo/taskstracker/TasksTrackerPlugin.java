@@ -208,6 +208,7 @@ public class TasksTrackerPlugin extends Plugin
 		{
 			return;
 		}
+
 		log.debug("onConfigChanged {} {}", configChanged.getKey(), configChanged.getNewValue());
 		if (configChanged.getKey().equals("untrackUponCompletion") && config.untrackUponCompletion())
 		{
@@ -217,6 +218,17 @@ public class TasksTrackerPlugin extends Plugin
 		if (configChanged.getKey().equals("filterPanelCollapsible"))
 		{
 			SwingUtilities.invokeLater(pluginPanel::redraw);
+		}
+
+		if (configChanged.getKey().startsWith("tab")) // task list tab config items all start 'tab#'
+		{
+			pluginPanel.refreshFilterButtonsFromConfig(config.taskListTab());
+			refresh();
+		}
+
+		if (configChanged.getKey().equals("taskPanelBatchSize"))
+		{
+			pluginPanel.taskListPanel.setBatchSize(config.taskPanelBatchSize());
 		}
 	}
 
@@ -256,7 +268,7 @@ public class TasksTrackerPlugin extends Plugin
 			log.debug("forceUpdateVarpsFlag game tick");
 			trackerConfigStore.loadCurrentTaskTypeFromConfig();
 			forceVarpUpdate();
-			SwingUtilities.invokeLater(() -> pluginPanel.redraw());
+			SwingUtilities.invokeLater(() -> pluginPanel.drawNewTaskType());
 			forceUpdateVarpsFlag = false;
 			taskService.setTaskTypeChanged(false);
 		}
@@ -333,8 +345,9 @@ public class TasksTrackerPlugin extends Plugin
                 }
                 SwingUtilities.invokeLater(() ->
                 {
-                    pluginPanel.redraw();
-                    pluginPanel.refresh(null);
+			pluginPanel.drawNewTaskType();
+			pluginPanel.refreshFilterButtonsFromConfig(config.taskListTab());
+			pluginPanel.refresh(null);
                 });
             });
         } catch (Exception ex) {

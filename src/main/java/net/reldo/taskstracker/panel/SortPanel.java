@@ -56,10 +56,7 @@ public class SortPanel extends FixedWidthPanel
         sortDropdown.setSelectedIndex(0);
         sortDropdown.addActionListener(e -> {
             updateConfig();
-            SwingUtilities.invokeLater(() -> {
-                taskListPanel.redraw();
-                taskListPanel.refresh(null);
-            });
+            SwingUtilities.invokeLater(taskListPanel::redraw);
         });
         sortDropdown.setFocusable(false);
 
@@ -70,10 +67,7 @@ public class SortPanel extends FixedWidthPanel
         directionButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
         directionButton.setStateChangedAction(e -> {
             updateConfig();
-            SwingUtilities.invokeLater(() -> {
-                taskListPanel.redraw();
-                taskListPanel.refresh(null);
-            });
+            SwingUtilities.invokeLater(taskListPanel::redraw);
         });
 
         add(sortDropdown);
