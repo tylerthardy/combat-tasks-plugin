@@ -34,6 +34,8 @@ public class TaskFromStruct
 	private StructComposition _struct;
 	private final Map<String, String> _stringParams = new HashMap<>();
 	private final Map<String, Integer> _intParams = new HashMap<>();
+	@Getter @Setter
+	private String note;
 
 	public TaskFromStruct(TaskType taskType, TaskDefinition taskDefinition)
 	{
@@ -148,11 +150,13 @@ public class TaskFromStruct
 	public void loadConfigSave(ConfigTaskSave loadedData)
 	{
 		setDates(loadedData.completed, loadedData.ignored, loadedData.tracked);
+		setNote(loadedData.note);
 	}
 
 	public void loadReldoSave(ReldoTaskSave loadedData)
 	{
 		setMostRecentDates(loadedData.getCompleted(), loadedData.getIgnored(), loadedData.getTodo());
+		setNote(loadedData.getNotes());
 	}
 
 	private void setDates(long completedOn, long ignoredOn, long trackedOn)

@@ -8,6 +8,7 @@ public class ConfigTaskSave
 	@Expose public final long tracked;
 	@Expose public final Integer structId;
 	@Expose public final long ignored;
+	@Expose public final String note;
 
 	public ConfigTaskSave(TaskFromStruct task)
 	{
@@ -15,5 +16,6 @@ public class ConfigTaskSave
 		tracked = task.getTrackedOn();
 		ignored = task.getIgnoredOn();
 		structId = task.getStructId();
+		note = task.getNote();
 	}
 }

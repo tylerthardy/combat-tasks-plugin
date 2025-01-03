@@ -19,8 +19,10 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
@@ -109,7 +111,7 @@ public class TaskPanel extends JPanel
 		}
 
 		String wikiNotes = task.getTaskDefinition().getWikiNotes();
-		if (wikiNotes != null)
+		if (wikiNotes != null && !wikiNotes.isEmpty())
 		{
 			tooltipText.append(HtmlUtil.HTML_LINE_BREAK).append(wikiNotes).append(HtmlUtil.HTML_LINE_BREAK);
 		}
@@ -126,6 +128,13 @@ public class TaskPanel extends JPanel
 		if (completionPercent != null)
 		{
 			tooltipText.append(HtmlUtil.HTML_LINE_BREAK).append("Players Completed: ").append(completionPercent).append('%');
+		}
+
+		String userNotes = task.getNote();
+		if (userNotes != null && !userNotes.isEmpty())
+		{
+			tooltipText.append(HtmlUtil.HTML_LINE_BREAK).append(HtmlUtil.HTML_LINE_BREAK);
+			tooltipText.append(HtmlUtil.wrapWithItalics(userNotes)).append(HtmlUtil.HTML_LINE_BREAK);
 		}
 
 		return HtmlUtil.wrapWithHtml(
@@ -246,20 +255,36 @@ public class TaskPanel extends JPanel
 			{
 				if (e.isPopupTrigger())
 				{
-					JPopupMenu menu = createWikiPopupMenu();
+					JPopupMenu menu = createTaskPopupMenu();
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 		});
 	}
 
-	public JPopupMenu createWikiPopupMenu()
+	public JPopupMenu createTaskPopupMenu()
 	{
 		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem editNoteItem = new JMenuItem("Edit Note");
+		editNoteItem.addActionListener(e -> editTaskNote());
+		popupMenu.add(editNoteItem);
 		JMenuItem openWikiItem = new JMenuItem("Wiki");
 		openWikiItem.addActionListener(e -> openRuneScapeWiki());
 		popupMenu.add(openWikiItem);
 		return popupMenu;
+	}
+
+	private void editTaskNote()
+	{
+		JOptionPane optionPane = new JOptionPane("Enter the notes to associate with this task (empty removes note):", JOptionPane.INFORMATION_MESSAGE);
+		optionPane.setInputValue(task.getNote());
+		optionPane.setWantsInput(true);
+		JDialog inputDialog = optionPane.createDialog(this, "Set tasks note");
+		inputDialog.setAlwaysOnTop(true);
+		inputDialog.setVisible(true);
+		String note = optionPane.getInputValue().toString();
+		task.setNote(note);
+		plugin.saveCurrentTaskTypeData();
 	}
 
 	private void openRuneScapeWiki()

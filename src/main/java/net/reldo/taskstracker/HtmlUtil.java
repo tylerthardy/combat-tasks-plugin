@@ -17,6 +17,11 @@ public class HtmlUtil
 		return "<p width=\"" + width + "\">" + text + "</p>";
 	}
 
+	public static String wrapWithItalics(String text)
+	{
+		return "<i>" + text + "</i>";
+	}
+
 	public static String wrapWithBold(String text)
 	{
 		return "<b>" + text + "</b>";
