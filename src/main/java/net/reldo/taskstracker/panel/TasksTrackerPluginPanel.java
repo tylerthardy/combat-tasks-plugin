@@ -21,7 +21,7 @@ public class TasksTrackerPluginPanel extends PluginPanel
 
 	public TaskListPanel taskListPanel;
 
-	private boolean loggedIn = false;
+	private boolean loggedInPanelVisible = false;
 	private TaskService taskService;
 
 	public TasksTrackerPluginPanel(TasksTrackerPlugin plugin, TasksTrackerConfig config, SpriteManager spriteManager, TaskService taskService)
@@ -50,7 +50,7 @@ public class TasksTrackerPluginPanel extends PluginPanel
 
 	public void redraw()
 	{
-		if (loggedIn)
+		if (loggedInPanelVisible)
 		{
 			loggedInPanel.redraw();
 		}
@@ -58,7 +58,7 @@ public class TasksTrackerPluginPanel extends PluginPanel
 
 	public void refresh(TaskFromStruct task)
 	{
-		if (loggedIn)
+		if (loggedInPanelVisible)
 		{
 			loggedInPanel.refresh(task);
 		}
@@ -68,27 +68,46 @@ public class TasksTrackerPluginPanel extends PluginPanel
 	{
 		if(SwingUtilities.isEventDispatchThread())
 		{
-            if (loggedIn != this.loggedIn)
-            {
-                if (loggedIn)
-                {
-                    loggedOutPanel.setVisible(false);
-                    loggedInPanel.setVisible(true);
-                }
-                else
-                {
-                    loggedInPanel.setVisible(false);
-                    loggedOutPanel.setVisible(true);
-                }
-
-                validate();
-                repaint();
-            }
-            this.loggedIn = loggedIn;
+			updateVisiblePanel(loggedIn);
 		}
 		else
 		{
 			log.error("Failed to update loggedIn state - not event dispatch thread.");
 		}
 	}
+
+	public void hideLoggedInPanel()
+	{
+		if(SwingUtilities.isEventDispatchThread())
+		{
+			updateVisiblePanel(false);
+		}
+		else
+		{
+			log.error("Failed to update logged in panel visibility - not event dispatch thread.");
+		}
+	}
+
+	private void updateVisiblePanel(boolean loggedInPanelVisible)
+	{
+		if (loggedInPanelVisible != this.loggedInPanelVisible)
+		{
+			if (loggedInPanelVisible)
+			{
+				loggedOutPanel.setVisible(false);
+				loggedInPanel.setVisible(true);
+			}
+			else
+			{
+				loggedInPanel.setVisible(false);
+				loggedOutPanel.setVisible(true);
+			}
+
+			validate();
+			repaint();
+		}
+		this.loggedInPanelVisible = loggedInPanelVisible;
+	}
+
+
 }

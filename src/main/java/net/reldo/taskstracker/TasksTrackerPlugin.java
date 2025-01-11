@@ -156,6 +156,7 @@ public class TasksTrackerPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
+		pluginPanel.hideLoggedInPanel();
 		pluginPanel = null;
 		taskService.clearTaskTypes();
 		clientToolbar.removeNavigation(navButton);
@@ -482,7 +483,6 @@ public class TasksTrackerPlugin extends Plugin
 					task.setTracked(false);
 				}
 				log.debug("process taskFromStruct {} ({}) {}", task.getStringParam("name"), task.getIntParam("id"), isTaskCompleted);
-				SwingUtilities.invokeLater(() -> pluginPanel.refresh(task));
 				future.complete(isTaskCompleted);
 			}
 			catch (Exception ex)
@@ -515,7 +515,19 @@ public class TasksTrackerPlugin extends Plugin
 		}
 
 		CompletableFuture<Void> allTasksFuture = CompletableFuture.allOf(taskFutures.toArray(new CompletableFuture[0]));
-		return allTasksFuture.thenApply(v -> true);
+		return allTasksFuture
+			.thenRun(() -> {
+				if (varpId != null)
+				{
+					for (TaskFromStruct task : tasks)
+					{
+						SwingUtilities.invokeLater(() -> pluginPanel.refresh(task));
+					}
+				} else {
+					SwingUtilities.invokeLater(() -> pluginPanel.refresh(null));
+				}
+			})
+			.thenApply(v -> true);
 	}
 
 	private String getCurrentTaskTypeExportJson()

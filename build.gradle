@@ -24,8 +24,8 @@ dependencies {
     testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.14.9'
 }
 
-group = '${group_id}'
-version = '${version}'
+group = 'net.reldo'
+version = '1.0-SNAPSHOT'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
